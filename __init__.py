@@ -1,35 +1,77 @@
-
+#!/usr/bin/env python3
+"""
+LittleGarden automatic controle
+"""
+__author__ = "Médéric Bellemare"
+__version__ = "0.1.0"
+__license__ = "MIT"
 
 
 from Water import Water
-import argparse
-import sys
-import os
-import logging
-import config
+import config, os, argparse, time
+import threading
+from flask import Flask, jsonify, request, Response
 
-# Author Médéric Bellemare
-# Début du projet 03-08-2019
+test = 0
 
-
-
-if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)s:%(levelname)s:%(message)s", filename='software.log',level=logging.DEBUG)
-
-    parser = argparse.ArgumentParser()
-    # parser.add_argument("-r", "--run", help="Run the automatique task with current configuration file", action="store_true")
-    parser.add_argument("-v", "--verbose",type=int, help="Application talk to you more", choices=[0,1,2], default=0)
-    args = parser.parse_args()
-    if args.verbose in (0,1,2):
-        root = logging.getLogger()
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-        handler.setFormatter(formatter)
-        root.addHandler(handler)
-
-    pump = Water(5,10,1,0.1)
-    pump.start()
-    pump.join()
+def create_app(config=None):
+    app = Flask(__name__)
+    # See http://flask.pocoo.org/docs/latest/config/
+    app.config.update(dict(DEBUG=True))
+    app.config.update(config or {})
 
     
+
+    # Definition of the routes. Put them into their own file. See also
+    # Flask Blueprints: http://flask.pocoo.org/docs/latest/blueprints
+    @app.route("/")
+    def hello_world():
+        return "Hello there please read the user manuel :D"
+
+    @app.route("/api/v1/water/status", methods=['GET','POST','OPTIONS'])
+    def routeWaterStatus():
+        if request.method == "GET":
+            return jsonify(waterThread.getStatus())
+        elif request.method == "POST":
+            if "name" in request.json:
+                return request.json["name"]
+            return Response(status = 501)
+        elif request.method == "OPTIONS":
+            keys=[i for i in waterThread.parameter.keys()]
+            return {"options":keys}
+        
+    @app.route("/api/v1/water/parameter", methods=['GET','POST','OPTIONS'])
+    def routeWaterParameter():
+        print(request.method)
+        if request.method == "GET":
+            return jsonify(waterThread.parameter)
+        elif request.method == "POST":
+            return jsonify(request.json)
+        elif request.method == "OPTIONS":
+            keys=[i for i in waterThread.parameter.keys()]
+            return {"options":keys}
+    
+    @app.route("/api/v1/light/status")
+    def routeLightStatus():
+        return Response(status = 501)
+    
+    @app.route("/api/v1/light/parameter")
+    def routeLightParameter():
+        return Response(status = 501)
+    
+
+    return app
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--port", action="store", default="8000")
+    args = parser.parse_args()
+    port = int(args.port)
+
+    waterThread = Water(5,10,1)
+    waterThread.setDaemon(True)
+    waterThread.start()
+    
+    webServer = create_app()
+    webServer.run(host="127.0.0.1", port=port, threaded=True)
+

@@ -16,6 +16,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/__init__.py",
+            "args": ["-p 8080"],
             "console": "integratedTerminal"
         }
     ]
