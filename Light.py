@@ -5,9 +5,9 @@ import Util
 import sqlite3
 
 class Light(Thread):
-    def __init__(self, configurationObj):
+    def __init__(self, globalConf):
         Thread.__init__(self)
-        self.parameter = configurationObj
+        self.parameter = globalConf
         self.dbCreate()
         self.status = {
             "isOn": False,
@@ -16,6 +16,10 @@ class Light(Thread):
         
     
     def run(self):
+        """
+        Execution du thread
+        """
+
         shutupStart = datetime.time(datetime.strptime(self.parameter["shutup"]["start"],"%H:%M:%S")) 
         shutupEnd = datetime.time(datetime.strptime(self.parameter["shutup"]["end"],"%H:%M:%S"))
         lightOn = datetime.time(datetime.strptime(self.parameter["light"]["horaire"]["start"],"%H:%M:%S"))
@@ -47,13 +51,11 @@ class Light(Thread):
         else:
             self.lightOn()
 
-    def forceLight(self):
-        if(self.status["isForceLight"] == False):
-            self.status["isForceLight"] = True
-        else:
-            self.status["isForceLight"] = False
-
     def dbCreate(self):
+        """
+        crée la table dans la database si elle n'existe pas.
+        """
+
         connection = sqlite3.connect(self.parameter["database"]["host"])
         cursor = connection.cursor()
         try:
@@ -69,6 +71,10 @@ class Light(Thread):
         connection.close()
 
     def dbInsert(self):
+        """
+        On insert l'objet status dans la base de donnée
+        """
+
         connection = sqlite3.connect(self.parameter["database"]["host"])
         cursor = connection.cursor()
         try:

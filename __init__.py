@@ -1,20 +1,36 @@
 #!/usr/bin/env python3
 """
-LittleGarden automatic controle
+LittleGarden automatic controler
 """
+
 __author__ = "Médéric Bellemare"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
-
 from Water import Water
 from Light import Light
-import os, argparse, time
-import threading
+from Temperature import Temperature
 from datetime import datetime, timedelta
+from functools import wraps
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response
+
+def needAPIKey(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if("KEY" in request.headers):
+            if("api-key" in mainConfig['webserver']):
+                if(request.headers["KEY"] != mainConfig['webserver']['api-key']):
+                    return Response("401 - Access denied.",401)
+            else:
+                raise Exception("You need to define you api-key in the config.yml")
+        else:
+            return Response("401 - Access denied.",401)
+        return func(*args, **kwargs)
+
+    return decorated_function
+
 
 def server(config=None):
     app = Flask(__name__)
@@ -23,16 +39,18 @@ def server(config=None):
     
     @app.route("/")
     def hello_world():
-        return "Hello there please read the user manuel :D"
+        return "Hello there this is the vue.js app"
 
     @app.route("/api/v1/status", methods=['GET','POST'])
+    @needAPIKey
     def routeWaterStatus():
         if request.method == "GET":
             # return jsonify(waterThread.getStatus())
             return jsonify({
                 "serverTime": datetime.now(),
                 "water": waterThread.status,
-                "light": lightThread.status
+                "light": lightThread.status,
+                "temperature": temperatureThread.status
             })
         elif request.method == "POST":
             if "name" in request.json:
@@ -40,16 +58,18 @@ def server(config=None):
             return Response(status = 501)
 
     @app.route("/api/v1/force/<class_>", methods=["GET"])
+    @needAPIKey
     def routeWaterForce(class_):
         if(class_ == "water"):
             waterThread.status["isForceWatering"] = True
         elif(class_ == "light"):
-            lightThread.forceLight()
+            lightThread.status["isForceLight"] = True
         else:
             return Response(f"Cannot find the service =(", 406)
         return Response(f"OK i will force the {class_}", 200)
         
     @app.route("/api/v1/parameter", methods=['GET','POST','OPTIONS'])
+    @needAPIKey
     def routeWaterParameter():
         if request.method == "GET":
             return jsonify(mainConfig)
@@ -65,7 +85,6 @@ def server(config=None):
     return app
 
 if __name__ == "__main__":
-
     mainConfig = Configuration().configObj
 
     waterThread = Water(mainConfig)
@@ -74,8 +93,9 @@ if __name__ == "__main__":
     lightThread = Light(mainConfig)
     lightThread.setDaemon(True)
     lightThread.start()
+    temperatureThread = Temperature(mainConfig)
+    temperatureThread.setDaemon(True)
+    temperatureThread.start()
 
     webServer = server()
     webServer.run(host=mainConfig['webserver']['host'], port=mainConfig['webserver']['port'],threaded=True,use_reloader=False)
-
-    

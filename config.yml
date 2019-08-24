@@ -1,6 +1,6 @@
 webserver:
   host: '127.0.0.1'
-  port: '80'
+  port: '8080'
 database:
   host: littleGarden.sqlite
   password: ''
@@ -18,3 +18,5 @@ water:
   loop_delay: 5
   open: 10
   targeted_moister: 0.1
+temperature:
+  loop_delay: 10

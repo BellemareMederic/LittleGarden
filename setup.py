@@ -9,5 +9,6 @@ setup(
    packages=['LittleGarden'],  #same as name
    install_requires=[
           'RPi.GPIO',
+          'pyyaml',
       ],
 )

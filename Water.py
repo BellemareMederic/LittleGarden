@@ -5,9 +5,9 @@ from datetime import datetime
 import Util
 
 class Water(Thread):
-    def __init__(self, configurationObj):
+    def __init__(self, globalConf):
         Thread.__init__(self)
-        self.parameter = configurationObj
+        self.parameter = globalConf
         self.dbCreate()
         self.status = {
             "isForceWatering": False,
@@ -15,6 +15,10 @@ class Water(Thread):
         }
     
     def run(self):
+        """
+        Execution du thread
+        """
+
         start = datetime.time(datetime.strptime(self.parameter["shutup"]["start"],"%H:%M:%S")) 
         end = datetime.time(datetime.strptime(self.parameter["shutup"]["end"],"%H:%M:%S"))
         while True:
@@ -32,9 +36,18 @@ class Water(Thread):
             time.sleep(self.parameter["water"]["loop_delay"])
     
     def checkHumidity(self):
+        """
+        Lire les données d'un ou plusieur capteur humidité
+        """
+
         self.status["currentHumidity"] = random.randint(0,100)/100
         
+    
     def doWatering(self):
+        """
+        Active la pompe pour X nombre de seconds
+        """
+
         #open water pompe
         self.status["isWatering"] = True
         self.dbInsert()
@@ -43,6 +56,10 @@ class Water(Thread):
         #close water pompe
 
     def dbCreate(self):
+        """
+        crée la table dans la database si elle n'existe pas.
+        """
+
         connection = sqlite3.connect(self.parameter["database"]["host"])
         cursor = connection.cursor()
         try:
@@ -61,6 +78,10 @@ class Water(Thread):
         connection.close()
 
     def dbInsert(self):
+        """
+        On insert l'objet status dans la base de donnée
+        """
+
         connection = sqlite3.connect(self.parameter["database"]["host"])
         cursor = connection.cursor()
         data = self.status

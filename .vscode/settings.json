@@ -1,9 +1,8 @@
 {
-    "sqltools.connections": [
-        {
-            "database": ".\\aqua.sqlite",
-            "dialect": "SQLite",
-            "name": "teste"
-        }
-    ]
+    "python.pythonPath": "/usr/bin/python3",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#00aa00b0",
+        "statusBar.background": "#00aa00b0",
+        "activityBarBadge.background": "#ff7300"
+      }
 }
