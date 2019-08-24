@@ -1,0 +1,9 @@
+{
+    "sqltools.connections": [
+        {
+            "database": ".\\aqua.sqlite",
+            "dialect": "SQLite",
+            "name": "teste"
+        }
+    ]
+}

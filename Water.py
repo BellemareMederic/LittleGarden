@@ -1,34 +1,35 @@
 from threading import Thread
-from datetime import datetime
-import time, random, logging, config, sqlite3
+import time, random, config, sqlite3
 import json
+from datetime import datetime
+import Util
 
 class Water(Thread):
-    def __init__(self, waterTime, afterWaterTime, loopInterval=600, targetMoist = 0.20):
+    def __init__(self, configurationObj):
         Thread.__init__(self)
-        self.parameter = {
-            "waterTime": waterTime,
-            "afterWaterTime": afterWaterTime,
-            "loopInterval": loopInterval,
-            "targetMoist": targetMoist
-        }
+        self.parameter = configurationObj
+        self.dbCreate()
         self.status = {
             "isForceWatering": False,
-            "isWatering": False
+            "isWatering": False,
         }
     
     def run(self):
-        # connection = sqlite3.connect(config.databaseName)
-        # self.cursor = connection.cursor()
+        start = datetime.time(datetime.strptime(self.parameter["shutup"]["start"],"%H:%M:%S")) 
+        end = datetime.time(datetime.strptime(self.parameter["shutup"]["end"],"%H:%M:%S"))
         while True:
+            currentTime = datetime.time(datetime.now())
             self.checkHumidity()
-            while (self.status["currentHumidity"] < self.parameter["targetMoist"] or self.status["isForceWatering"]):
-                #Regarder si on nous somme dans la bonne plage horraire
-                self.doWatering()
-                self.isForceWatering = False
-                time.sleep(self.parameter["afterWaterTime"])  
-                self.checkHumidity()              
-            time.sleep(self.parameter["loopInterval"])
+            if(not Util.timeBetweem(start,end,currentTime)):
+                if(self.status["currentHumidity"] < self.parameter["water"]["targeted_moister"] or self.status["isForceWatering"]):
+                    while (self.status["currentHumidity"] < self.parameter["water"]["targeted_moister"] or self.status["isForceWatering"]):
+                        self.doWatering()
+                        self.status["isForceWatering"] = False
+                        time.sleep(self.parameter["water"]["after"])  
+                        self.checkHumidity()
+                else:
+                   self.dbInsert()
+            time.sleep(self.parameter["water"]["loop_delay"])
     
     def checkHumidity(self):
         self.status["currentHumidity"] = random.randint(0,100)/100
@@ -36,25 +37,41 @@ class Water(Thread):
     def doWatering(self):
         #open water pompe
         self.status["isWatering"] = True
-        time.sleep(self.parameter["waterTime"])
+        self.dbInsert()
+        time.sleep(self.parameter["water"]["open"])
         self.status["isWatering"] = False
         #close water pompe
 
-    def writeToDatabase(self, data):
-        pass
-        # self.cursor.execute(f"INSERT INTO humidity (humidity, watering) VALUES ({data.humidity},{data.watering})")
+    def dbCreate(self):
+        connection = sqlite3.connect(self.parameter["database"]["host"])
+        cursor = connection.cursor()
+        try:
+            cursor.execute(f"""CREATE TABLE water(
+                timestamp TEXT DEFAULT (datetime('now','localtime')),
+                humidity FLOAT,
+                water FLOAT,
+                watering INT,
+                forceWatering INT
 
-    def getParam(self):
-        """
-        Return object parameter 
-        """
-        return self.parameter 
-        
+            )""")
+        except sqlite3.Error as e:
+            print(e)
 
-    def getStatus(self):
-        """
-        Return status information about the current object
-        """
-        return self.status
+        connection.commit()
+        connection.close()
+
+    def dbInsert(self):
+        connection = sqlite3.connect(self.parameter["database"]["host"])
+        cursor = connection.cursor()
+        data = self.status
+        try:
+            cursor.execute(f"INSERT INTO water (humidity, water, watering, forceWatering) VALUES (?,?,?,?)",(data["currentHumidity"],20,data["isWatering"],data["isForceWatering"]))
+        except sqlite3.Error as e:
+            print(f"Water insert error: {e}")
+        connection.commit()
+        connection.close()
+        #pourcentage d'humidité
+        #nombre de ml d'everser (time(s)*débie)
+        #date et heurs
     
-    
+# SELECT timestamp, humidity, water, watering, forceWater FROM `water` WHERE strftime('%Y-%m-%d %H:%M:%S', timestamp) BETWEEN '2019-08-18 14:13:47' AND '2019-08-18 14:14:27';
