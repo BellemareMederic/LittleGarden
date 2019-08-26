@@ -2,11 +2,6 @@
 """
 LittleGarden automatic controler
 """
-
-__author__ = "Médéric Bellemare"
-__version__ = "0.1.0"
-__license__ = "MIT"
-
 from Water import Water
 from Light import Light
 from Temperature import Temperature
@@ -14,7 +9,12 @@ from datetime import datetime, timedelta
 from functools import wraps
 import time
 from config import Configuration
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, render_template
+
+__author__ = "Médéric Bellemare"
+__version__ = "0.1.0"
+__license__ = "MIT"
+
 
 def needAPIKey(func):
     @wraps(func)
@@ -22,26 +22,28 @@ def needAPIKey(func):
         if("KEY" in request.headers):
             if("api-key" in mainConfig['webserver']):
                 if(request.headers["KEY"] != mainConfig['webserver']['api-key']):
-                    return Response("401 - Access denied.",401)
+                    return Response("401 - Access denied.", 401)
             else:
-                raise Exception("You need to define you api-key in the config.yml")
+                raise Exception(
+                    "You need to define you api-key in the config.yml")
         else:
-            return Response("401 - Access denied.",401)
+            return Response("401 - Access denied.", 401)
         return func(*args, **kwargs)
 
     return decorated_function
 
 
 def server(config=None):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="./dist/static",
+                template_folder="./dist")
     app.config.update(dict(DEBUG=True))
     app.config.update(config or {})
-    
-    @app.route("/")
-    def hello_world():
-        return "Hello there this is the vue.js app"
 
-    @app.route("/api/v1/status", methods=['GET','POST'])
+    @app.route("/", methods=['GET'])
+    def hello_world():
+        return render_template("index.html")
+
+    @app.route("/api/v1/status", methods=['GET', 'POST'])
     @needAPIKey
     def routeWaterStatus():
         if request.method == "GET":
@@ -55,7 +57,7 @@ def server(config=None):
         elif request.method == "POST":
             if "name" in request.json:
                 return request.json["name"]
-            return Response(status = 501)
+            return Response(status=501)
 
     @app.route("/api/v1/force/<class_>", methods=["GET"])
     @needAPIKey
@@ -67,8 +69,8 @@ def server(config=None):
         else:
             return Response(f"Cannot find the service =(", 406)
         return Response(f"OK i will force the {class_}", 200)
-        
-    @app.route("/api/v1/parameter", methods=['GET','POST','OPTIONS'])
+
+    @app.route("/api/v1/parameter", methods=['GET', 'POST', 'OPTIONS'])
     @needAPIKey
     def routeWaterParameter():
         if request.method == "GET":
@@ -78,11 +80,11 @@ def server(config=None):
             return jsonify(request.json)
 
         elif request.method == "OPTIONS":
-            keys=[i for i in mainConfig.keys()]
-            return {"options":keys}
+            keys = [i for i in mainConfig.keys()]
+            return {"options": keys}
 
-        
     return app
+
 
 if __name__ == "__main__":
     mainConfig = Configuration().configObj
@@ -98,4 +100,5 @@ if __name__ == "__main__":
     temperatureThread.start()
 
     webServer = server()
-    webServer.run(host=mainConfig['webserver']['host'], port=mainConfig['webserver']['port'],threaded=True,use_reloader=False)
+    webServer.run(host=mainConfig['webserver']['host'],
+                  port=mainConfig['webserver']['port'], threaded=True, use_reloader=False)
