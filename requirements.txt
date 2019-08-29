@@ -1,3 +1,4 @@
 pyyaml
 flask
 RPi.GPIO
+flask-cors

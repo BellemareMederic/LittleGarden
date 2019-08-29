@@ -10,6 +10,7 @@ from functools import wraps
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response, render_template
+from flask_cors import CORS
 
 __author__ = "Médéric Bellemare"
 __version__ = "0.1.0"
@@ -36,6 +37,7 @@ def needAPIKey(func):
 def server(config=None):
     app = Flask(__name__, static_folder="./dist/static",
                 template_folder="./dist")
+    CORS(app)
     app.config.update(dict(DEBUG=True))
     app.config.update(config or {})
 

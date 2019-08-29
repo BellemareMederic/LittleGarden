@@ -1,6 +1,7 @@
 webserver:
   host: '127.0.0.1'
   port: '8080'
+  api-key: '1234'
 database:
   host: littleGarden.sqlite
   password: ''
