@@ -4,6 +4,13 @@
 
 <script>
 export default {
-    props: ['status']
-}
+  computed:{
+    status() {
+      return this.$store.getters.status
+    },
+    parameter(){
+      return this.$store.getters.parameter
+    }
+  }
+};
 </script>

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import { store } from './store/store'
 import './registerServiceWorker'
 import axios from 'axios'
 
@@ -11,10 +12,14 @@ const $axios = axios.create({
   timeout: 1000,
   headers: {'KEY':'1234'}
 });
-
 window.axios = $axios
+
+Vue.filter('pourcent', function (value) {
+  return Math.floor(value*100) + " %"
+})
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
