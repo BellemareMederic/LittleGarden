@@ -1,5 +1,5 @@
-<template>
-<svg class="cloud" viewBox="0 0 145 84" version="1.1" 
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="100%" viewBox="0 0 145 84" version="1.1" 
     xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" 
     style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
@@ -8,25 +8,3 @@
         <path d="M74.761,14.014c4.658,-5.87 11.854,-9.637 19.923,-9.637c14.032,0 25.424,11.392 25.424,25.424c0,0.326 -0.006,0.65 -0.018,0.972c10.642,3.037 18.442,12.841 18.442,24.452c0,14.032 -11.392,25.424 -25.424,25.424c-9.336,0 -17.503,-5.043 -21.924,-12.551c-4.421,7.508 -12.588,12.551 -21.923,12.551c-7.513,0 -14.268,-3.266 -18.924,-8.453c-4.656,5.187 -11.412,8.453 -18.924,8.453c-14.032,0 -25.424,-11.392 -25.424,-25.424c0,-13.359 10.326,-24.325 23.424,-25.346l0,-0.078c0,-14.032 11.392,-25.424 25.424,-25.424c8.069,0 15.265,3.767 19.924,9.637Z" style="fill:#fff;stroke:#bdbdbd;stroke-width:0.53px;"/>
     </g>
 </svg>
-</template>
-<style lang="scss">
-.cloud{
-  position: absolute;
-  height: 20vh;
-  top:10vh;
-  left:50%;
-  transform: translateX(-50%)
-}
-</style>
-<script>
-export default {
-  computed:{
-    status() {
-      return this.$store.getters.status
-    },
-    parameter(){
-      return this.$store.getters.parameter
-    }
-  }
-};
-</script>

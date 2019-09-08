@@ -2,7 +2,7 @@
   <div>
     <svg v-if="status.water"
       id="plante"
-      :class="{active: status.water.currentHumidity > 2}"
+      :class="{active: status.water.currentHumidity > parameter.water.targeted_moister}"
       viewBox="0 0 400 395"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"

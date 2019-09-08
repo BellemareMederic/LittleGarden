@@ -6,11 +6,8 @@
     </svg>
     <Plante />
       <div class="white-box left">
+        <span v-if="status.water">{{ status.temperature.temperature }} °C</span>
         <span v-if="status.water">{{ status.water.currentHumidity | pourcent }}</span>
-        <span v-if="status.water">{{ status.water.isWatering }}</span>
-      </div>
-      <div class="white-box right">
-        <span v-if="status.light">{{ status.light.isOn }}</span>
       </div>
   </div>
 </template>
@@ -21,26 +18,23 @@ body {
 .home{
   height: 100%;
   .white-box{
-    background-color: rgba(255, 255, 255, 0.349);
     display: flex;
     align-items: center;
     justify-content:center;
+    font-size:4em;
     flex-direction: column;
     padding:20px;
-    height: 100px;
-    width: 100px;
+    color:rgba(255, 255, 255, 0.5);
   }
   .left{
     position: absolute;
     left:10%;
     bottom:20%;
-    font-size:2em;
-  }
-  .right{
-    position: absolute;
-    right:10%;
-    bottom:20%;
-    font-size:2em;
+    min-width: 15;
+    @media only screen and (max-width: 600px) {
+      padding:10px;
+      left:0;
+    }
   }
 }
 #grass {

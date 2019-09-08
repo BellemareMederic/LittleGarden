@@ -4,6 +4,7 @@ import time
 import Util
 import sqlite3
 
+
 class Light(Thread):
     def __init__(self, globalConf):
         Thread.__init__(self)
@@ -13,40 +14,42 @@ class Light(Thread):
             "isOn": False,
             "isForceLight": False
         }
-        
-    
+
     def run(self):
         """
         Execution du thread
         """
 
-        shutupStart = datetime.time(datetime.strptime(self.parameter["shutup"]["start"],"%H:%M:%S")) 
-        shutupEnd = datetime.time(datetime.strptime(self.parameter["shutup"]["end"],"%H:%M:%S"))
-        lightOn = datetime.time(datetime.strptime(self.parameter["light"]["horaire"]["start"],"%H:%M:%S"))
-        lightOff = datetime.time(datetime.strptime(self.parameter["light"]["horaire"]["end"],"%H:%M:%S"))
+        shutupStart = datetime.time(datetime.strptime(
+            self.parameter["shutup"]["start"], "%H:%M:%S"))
+        shutupEnd = datetime.time(datetime.strptime(
+            self.parameter["shutup"]["end"], "%H:%M:%S"))
+        lightOn = datetime.time(datetime.strptime(
+            self.parameter["light"]["horaire"]["start"], "%H:%M:%S"))
+        lightOff = datetime.time(datetime.strptime(
+            self.parameter["light"]["horaire"]["end"], "%H:%M:%S"))
         while True:
             currentTime = datetime.time(datetime.now())
-            if(not Util.timeBetweem(shutupStart,shutupEnd,currentTime)):
-                if(Util.timeBetweem(lightOn,lightOff,currentTime) or self.status["isForceLight"] == True) :
+            if(not Util.timeBetweem(shutupStart, shutupEnd, currentTime)):
+                if(Util.timeBetweem(lightOn, lightOff, currentTime) or self.status["isForceLight"] is True):
                     self.lightOn()
                 else:
                     self.lightOff()
                 self.dbInsert()
             time.sleep(self.parameter["light"]["loop_delay"])
-                
 
     def lightOn(self):
-        if(self.status['isOn'] == False):
+        if(self.status['isOn'] is False):
             print("Turning On")
             self.status['isOn'] = True
 
     def lightOff(self):
-        if(self.status["isOn"] == True):
+        if(self.status["isOn"] is True):
             print("Turning Off")
             self.status["isOn"] = False
 
     def toggleLight(self):
-        if(self.status["isOn"] == True):
+        if(self.status["isOn"] is True):
             self.lightOff()
         else:
             self.lightOn()
@@ -78,7 +81,8 @@ class Light(Thread):
         connection = sqlite3.connect(self.parameter["database"]["host"])
         cursor = connection.cursor()
         try:
-            cursor.execute("INSERT INTO light(light, ForceLight) VALUES (?,?)",(str(int(self.status["isOn"])), self.status["isForceLight"]))
+            cursor.execute("INSERT INTO light(light, ForceLight) VALUES (?,?)", (str(
+                int(self.status["isOn"])), self.status["isForceLight"]))
         except sqlite3.Error as e:
             print(f"Light insert error: {e}")
 
