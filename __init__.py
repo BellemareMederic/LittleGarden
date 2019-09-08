@@ -6,7 +6,7 @@ from Water import Water
 from Light import Light
 from Temperature import Temperature
 from datetime import datetime, timedelta
-from functools import wraps
+from functools import wraps     
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response, render_template
@@ -84,6 +84,15 @@ def server(config=None):
         elif request.method == "OPTIONS":
             keys = [i for i in mainConfig.keys()]
             return {"options": keys}
+
+    @app.route("/api/v1/history", methods=['GET'])
+    @needAPIKey
+    def history():
+        startdate = request.args.get('startdate')
+        enddate = request.args.get('enddate')
+        if(startdate is not None and enddate is not None):
+            return Response(f"I receive {startdate}{enddate}")
+        return Response(f"Missing parameter")
 
     return app
 
