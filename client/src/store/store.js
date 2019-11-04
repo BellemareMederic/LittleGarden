@@ -1,18 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import axios from 'axios'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state:{
         status:{},
-        parameter:{}
+        parameter:{},
+        history:[]
     },
     //Appeler quand on veux recuperer une valeur du store
     getters:{
         status: state => state.status,
-        parameter: state => state.parameter
+        parameter: state => state.parameter,
+        history: state => state.history
     },
     //Appeler quand on veux modifier une valeur du store
     mutations:{
@@ -27,6 +28,9 @@ export const store = new Vuex.Store({
                 ...state.parameter,
                 ...payload
             }
+        },
+        updateHistory(state, payload){
+            state.history = payload 
         }
     },
     //Une fonction qui peut etre apeller pour modifier des valeurs
@@ -54,6 +58,12 @@ export const store = new Vuex.Store({
                 'water': {'after': 5, 'loop_delay': 10, 'open': 10, 'targeted_moister': 2},
                 'temperature': {'loop_delay': 10}
             })
+        },
+        fetchHistory(){
+            window.axios.get('/history')
+            .then(function (response) {
+                store.commit('updateHistory',response.data)
+            })
         }
-    }
+    } 
 })

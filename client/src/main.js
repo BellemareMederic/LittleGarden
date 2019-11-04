@@ -4,8 +4,10 @@ import router from './router'
 import { store } from './store/store'
 import './registerServiceWorker'
 import axios from 'axios'
+import VueApexCharts from 'vue-apexcharts'
 
 Vue.config.productionTip = false
+Vue.component('apexchart', VueApexCharts)
 
 const $axios = axios.create({
   baseURL: 'http://127.0.0.1:8080/api/v1/',
