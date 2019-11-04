@@ -10,7 +10,7 @@ from functools import wraps
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response, render_template
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 __author__ = "Médéric Bellemare"
 __version__ = "0.1.0"
@@ -37,9 +37,8 @@ def needAPIKey(func):
 def server(config=None):
     app = Flask(__name__, static_folder="./dist/static",
                 template_folder="./dist")
-    CORS(app)
+    # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     app.config.update(dict(DEBUG=True))
-    app.config.update(config or {})
 
     @app.route("/", methods=['GET'])
     def hello_world():
@@ -86,12 +85,10 @@ def server(config=None):
             return {"options": keys}
 
     @app.route("/api/v1/history", methods=['GET'])
+    @cross_origin(origin='*')
     @needAPIKey
     def history():
-        startdate = request.args.get('startdate')
-        enddate = request.args.get('enddate')
-        if(startdate is not None and enddate is not None):
-            return Response(f"I receive {startdate}{enddate}")
+        return jsonify(waterThread.dbBetween(request.args))
         return Response(f"Missing parameter")
 
     return app
