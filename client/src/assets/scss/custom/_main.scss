@@ -1,0 +1,13 @@
+body{
+    margin:0;
+    overflow:hidden;
+    font-family: "Manjari";
+  }
+  #app {
+    color: #2c3e50;
+    height: 100vh;
+  }
+  
+  .cards {
+    @include cards;
+  }

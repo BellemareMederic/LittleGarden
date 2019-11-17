@@ -1,18 +1,28 @@
 <template>
   <div class="about">
-    <div id="chart">
-      <!-- <div class="toolbar">
-        <button @click="updateData('one_month')" id="one_month" :class="{active: selection==='one_month'}">1M</button>
-        <button @click="updateData('six_months')" id="six_months" :class="{active: selection==='six_months'}">6M</button>
-        <button @click="updateData('one_year')" id="one_year" :class="{active: selection==='one_year'}">1Y</button>
-        <button @click="updateData('ytd')" id="ytd" :class="{active: selection==='ytd'}">YTD</button>
-        <button @click="updateData('all')" id="all" :class="{active: selection==='all'}">ALL</button>
-      </div> -->
       <input type="date">
-      <apexchart type=area height=350 :options="chartOptions" :series="series" />
-    </div>
+      <div class="charts">
+        <apexchart class="cards" type=area height=350 :options="chartOptions" :series="series" />
+        <apexchart class="cards" type=area height=350 :options="chartOptions" :series="series" />
+      </div>
   </div>
 </template>
+<style lang="scss">
+@import "../assets/scss/_variables.scss";
+@import "../assets/scss/_mixins.scss";
+.charts{
+  display: flex;
+  flex-direction: column;
+  .cards{
+    flex-grow: 1;
+    width: 100%;
+  }
+  @include mediaq('medium'){
+    flex-direction: row;
+    width: 100%;
+  }
+}
+</style>
 <script>
 export default {
   computed:{
