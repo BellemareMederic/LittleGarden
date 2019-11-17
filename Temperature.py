@@ -55,3 +55,22 @@ class Temperature(Thread):
 
         connection.commit()
         connection.close()
+
+    def dbBetween(self, args):
+        connection = sqlite3.connect(self.parameter["database"]["host"])
+        cursor = connection.cursor()
+        if(args.get('startdate') is not None and args.get('enddate') is not None):
+            query = f"SELECT * FROM temperature WHERE timestamp BETWEEN '{startdate}' AND '{enddate}'"
+        elif(args.get('startdate') is not None):
+            startdate = datetime(args.get('startdate'))
+            # enddate = startdate.set
+            query = f"SELECT * FROM temperature WHERE timestamp BETWEEN '{startdate}' AND '{enddate}'"
+        else:
+            query = f"SELECT * FROM temperature WHERE timestamp"
+        try:
+            cursor.execute(query)
+            data = cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Cannot get information {e}")
+        connection.close()
+        return data

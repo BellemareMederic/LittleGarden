@@ -53,7 +53,7 @@ export default {
   name: "home",
   components: {
     Nuage,
-    Plante
+    Plante,
   },
   
   computed: {

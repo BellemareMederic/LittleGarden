@@ -109,7 +109,7 @@ class Water(Thread):
         elif(args.get('startdate') is not None):
             startdate = datetime(args.get('startdate'))
             # enddate = startdate.set
-            query = "SELECT * FROM water WHERE timestamp BETWEEN '{startdate}' AND '{enddate}'"
+            query = f"SELECT * FROM water WHERE timestamp BETWEEN '{startdate}' AND '{enddate}'"
         else:
             query = f"SELECT * FROM water WHERE timestamp"
         try:

@@ -87,8 +87,8 @@ def server(config=None):
     @app.route("/api/v1/history", methods=['GET'])
     @cross_origin(origin='*')
     @needAPIKey
-    def history():
-        return jsonify(waterThread.dbBetween(request.args))
+    def history(): 
+        return jsonify(dict(name='water', data=waterThread.dbBetween(request.args)), dict(name='light', data=lightThread.dbBetween(request.args)), dict(name='temperature', data=temperatureThread.dbBetween(request.args)))
         return Response(f"Missing parameter")
 
     return app

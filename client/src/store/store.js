@@ -62,7 +62,8 @@ export const store = new Vuex.Store({
         fetchHistory(){
             window.axios.get('/history')
             .then(function (response) {
-                store.commit('updateHistory',response.data)
+                console.log(response);
+                store.commit('updateHistory',response.data);
             })
         }
     } 
