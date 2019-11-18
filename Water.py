@@ -120,5 +120,35 @@ class Water(Thread):
         connection.close()
         return data
 
+    def getAvgHumidityDay(self, args):
+        connection = sqlite3.connect(self.parameter["database"]["host"])
+        cursor = connection.cursor()
+        query = f"SELECT AVG(humidity) FROM water"
+        try:
+            cursor.execute(query)
+            data = cursor.fetchone()
+        except expression as identifier:
+            print(f"Cannot get information {e}")
+        return data
+
+
+    def getHumidityBetweenDate(self,args):
+        connection = sqlite3.connect(self.parameter["database"]["host"])
+        cursor = connection.cursor()
+        if(args.get('startdate') is not None and args.get('enddate') is not None):
+            query = f"SELECT * FROM water WHERE timestamp BETWEEN '{startdate}' AND '{enddate}'"
+        elif(args.get('startdate') is not None):
+            startdate = datetime(args.get('startdate'))
+            # enddate = startdate.set
+            query = f"SELECT * FROM water WHERE timestamp BETWEEN '{startdate}' AND date('now') LIMIT 100"
+        else:
+            query = f"SELECT * FROM water LIMIT 300"
+        try:
+            cursor.execute(query)
+            data = cursor.fetchall()
+        except sqlite3.Error as e:
+            print(f"Cannot get information {e}")
+        connection.close()
+        return data
 
 # SELECT timestamp, humidity, water, watering, forceWater FROM `water` WHERE strftime('%Y-%m-%d %H:%M:%S', timestamp) BETWEEN '2019-08-18 14:13:47' AND '2019-08-18 14:14:27';

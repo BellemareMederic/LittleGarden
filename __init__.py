@@ -6,7 +6,7 @@ from Water import Water
 from Light import Light
 from Temperature import Temperature
 from datetime import datetime, timedelta
-from functools import wraps     
+from functools import wraps
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response, render_template
@@ -88,9 +88,11 @@ def server(config=None):
     @cross_origin(origin='*')
     @needAPIKey
     def history(): 
-        return jsonify(dict(name='water', data=waterThread.dbBetween(request.args)), dict(name='light', data=lightThread.dbBetween(request.args)), dict(name='temperature', data=temperatureThread.dbBetween(request.args)))
+        # return jsonify(dict(name='water', data=waterThread.dbBetween(request.args)), dict(name='light', data=lightThread.dbBetween(request.args)), dict(name='temperature', data=temperatureThread.dbBetween(request.args)))
+        return jsonify({'water': dict(name='water', data=waterThread.getAvgHumidityDay(request.args)),
+                        'light': dict(name="light", data='light'),
+                        'temperature': dict(name="temperature", data='temperature')})
         return Response(f"Missing parameter")
-
     return app
 
 
@@ -109,4 +111,6 @@ if __name__ == "__main__":
 
     webServer = server()
     webServer.run(host=mainConfig['webserver']['host'],
-                  port=mainConfig['webserver']['port'], threaded=True, use_reloader=False)
+                  port=mainConfig['webserver']['port'], 
+                  threaded=True,
+                  use_reloader=False)

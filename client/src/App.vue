@@ -8,11 +8,6 @@
     <router-view/>
   </div>
 </template>
-
-<style lang="scss">
-  
-</style>
-
 <script>
 import "./assets/scss/style.scss";
 export default {

@@ -8,14 +8,11 @@
   </div>
 </template>
 <style lang="scss">
-@import "../assets/scss/_variables.scss";
-@import "../assets/scss/_mixins.scss";
 .charts{
   display: flex;
   flex-direction: column;
   .cards{
     flex-grow: 1;
-    width: 100%;
   }
   @include mediaq('medium'){
     flex-direction: row;
