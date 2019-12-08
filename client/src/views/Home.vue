@@ -7,7 +7,8 @@
     <Plante />
       <div class="white-box left">
         <span v-if="status.water">{{ status.temperature.temperature }} °C</span>
-        <span v-if="status.water">{{ status.water.currentHumidity | pourcent }}</span>
+        <!-- {{ status.water.currentHumidity }} -->
+        <span v-if="status.water">{{ status.water.currentHumidity }}</span>
       </div>
   </div>
 </template>

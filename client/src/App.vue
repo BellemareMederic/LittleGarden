@@ -14,7 +14,7 @@ export default {
   created() {
     setInterval(() => {
       this.$store.dispatch("fetchData");
-    }, 1000);
+    }, 5000);
   },
 }
 </script>

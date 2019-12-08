@@ -36,21 +36,25 @@ export const store = new Vuex.Store({
     //Une fonction qui peut etre apeller pour modifier des valeurs
     actions:{
         fetchData(){
-            store.commit('updateStatus',{
-                "light": {
-                  "isForceLight": false,
-                  "isOn": false
-                },
-                "serverTime": "Tue, 27 Aug 2019 18:45:02 GMT",
-                "temperature": {
-                  "temperature": 0
-                },
-                "water": {
-                  "currentHumidity": Math.random(),
-                  "isForceWatering": false,
-                  "isWatering": true
-                }
+            window.axios.get('/status')
+            .then(function (response){
+                store.commit('updateStatus',response.data)
             })
+            // store.commit('updateStatus',{
+            //     "light": {
+            //       "isForceLight": false,
+            //       "isOn": false
+            //     },
+            //     "serverTime": "Tue, 27 Aug 2019 18:45:02 GMT",
+            //     "temperature": {
+            //       "temperature": 0
+            //     },
+            //     "water": {
+            //       "currentHumidity": Math.random(),
+            //       "isForceWatering": false,
+            //       "isWatering": true
+            //     }
+            // })
             store.commit('updateParameter',{
                 'database': {'host': 'littleGarden', 'password': '', 'username': ''},
                 'light': {'horaire': {'start': '08:25:00', 'end': '12:42:00'}, 'loop_delay': 10},
