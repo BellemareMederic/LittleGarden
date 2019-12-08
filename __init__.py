@@ -2,15 +2,16 @@
 """
 LittleGarden automatic controler
 """
-from Water import Water
-from Light import Light
-from Temperature import Temperature
+from lib.Water import Water
+from lib.Light import Light
+from lib.Temperature import Temperature
 from datetime import datetime, timedelta
 from functools import wraps
 import time
 from config import Configuration
 from flask import Flask, jsonify, request, Response, render_template
 from flask_cors import CORS, cross_origin
+from lib.DBConnection import *
 
 __author__ = "Médéric Bellemare"
 __version__ = "0.1.0"
@@ -93,11 +94,21 @@ def server(config=None):
                         'light': dict(name="light", data='light'),
                         'temperature': dict(name="temperature", data='temperature')})
         return Response(f"Missing parameter")
+
+    @app.route("/api/v1/history/avg", methods=['GET'])
+    @cross_origin(origin='*')
+    @needAPIKey
+    def avg():
+        humidity, water = waterThread.dbGetAvgWeek(request.args.get('startdate'), request.args.get('enddate'))
+        # return jsonify(dict(name='water', data=waterThread.dbBetween(request.args)), dict(name='light', data=lightThread.dbBetween(request.args)), dict(name='temperature', data=temperatureThread.dbBetween(request.args)))
+        return jsonify(moyenne = dict(humidity=humidity,water=water))
     return app
 
 
 if __name__ == "__main__":
     mainConfig = Configuration().configObj
+    
+    dbsql = createDBConnection()
 
     waterThread = Water(mainConfig)
     waterThread.setDaemon(True)
@@ -108,6 +119,7 @@ if __name__ == "__main__":
     temperatureThread = Temperature(mainConfig)
     temperatureThread.setDaemon(True)
     temperatureThread.start()
+
 
     webServer = server()
     webServer.run(host=mainConfig['webserver']['host'],

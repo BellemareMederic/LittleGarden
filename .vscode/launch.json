@@ -20,7 +20,7 @@
             "program": "${workspaceFolder}/__init__.py",
             "args": ["-p 8080"],
             "console": "integratedTerminal",
-            "pythonPath": "%ProgramFiles%\\Python 3"
+            "pythonPath": "D:\\Users\\Mederic\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe"
         }
     ]
 }

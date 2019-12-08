@@ -2,3 +2,4 @@ pyyaml
 flask
 RPi.GPIO
 flask-cors
+adafruit-circuitpython-ads1x15
