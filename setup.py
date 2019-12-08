@@ -10,5 +10,6 @@ setup(
    install_requires=[
           'RPi.GPIO',
           'pyyaml',
+          'adafruit_ads1x15'
       ],
 )

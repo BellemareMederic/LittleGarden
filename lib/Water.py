@@ -23,7 +23,7 @@ class Water(Thread):
             "isWatering": False,
         }
         self.i2c = busio.I2C(board.SCL, board.SDA)
-        self.ads = ADS.ADS1115(i2c)
+        self.ads = ADS.ADS1115(self.i2c)
 
     def run(self):
         """
@@ -52,8 +52,9 @@ class Water(Thread):
         """
         Lire les données d'un ou plusieur capteur humidité
         """
-        channel = AnalogIn(ads, ADS.P0)
+        channel = AnalogIn(self.ads, ADS.P0)
         print(channel.value, channel.voltage)
+        self.status["currentHumidity"] = channel.value
 
     def doWatering(self):
         """
