@@ -10,7 +10,7 @@ Vue.config.productionTip = false
 Vue.component('apexchart', VueApexCharts)
 
 const $axios = axios.create({
-  baseURL: 'http://127.0.0.1:8080/api/v1/',
+  baseURL: 'http://192.168.1.246:8080/api/v1/',
   timeout: 1000,
   headers: {'KEY':'1234'}
 });

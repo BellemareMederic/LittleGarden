@@ -38,7 +38,7 @@ def needAPIKey(func):
 def server(config=None):
     app = Flask(__name__, static_folder="./dist/static",
                 template_folder="./dist")
-    # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     app.config.update(dict(DEBUG=True))
 
     @app.route("/", methods=['GET'])
@@ -102,6 +102,7 @@ def server(config=None):
         humidity, water = waterThread.dbGetAvgWeek(request.args.get('startdate'), request.args.get('enddate'))
         # return jsonify(dict(name='water', data=waterThread.dbBetween(request.args)), dict(name='light', data=lightThread.dbBetween(request.args)), dict(name='temperature', data=temperatureThread.dbBetween(request.args)))
         return jsonify(moyenne = dict(humidity=humidity,water=water))
+
     return app
 
 
