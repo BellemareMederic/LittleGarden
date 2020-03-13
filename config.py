@@ -15,8 +15,7 @@ class Configuration():
     def loadConfig(self):
         with open("config.yml", 'r') as ymlfile:
             for doc in yaml.load_all(ymlfile, Loader=yaml.FullLoader):
-                config.update(doc)
-            self.config = config
+                self.config.update(doc)
 
     def saveConfig(self):
         print("saving data")

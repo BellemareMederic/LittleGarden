@@ -4,5 +4,5 @@ from config import Configuration
 
 
 def createDBConnection():
-    config = Configuration().configObj['database']['host']
+    config = Configuration().config['database']['host']
     return sqlite3.connect(config)

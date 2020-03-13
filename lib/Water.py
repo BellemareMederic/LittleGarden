@@ -15,7 +15,7 @@ import busio
 class Water(Thread):
     def __init__(self, globalConf):
         Thread.__init__(self)
-        self.parameter = globalConf
+        self.parameter = globalConf.config
         self.dbCreate()
         self.status = {
             "isForceWatering": False,

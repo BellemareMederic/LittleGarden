@@ -107,7 +107,7 @@ def server(config=None):
 
 
 if __name__ == "__main__":
-    mainConfig = Configuration().configObj
+    mainConfig = Configuration()
 
     dbsql = createDBConnection()
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     temperatureThread.start()
 
     webServer = server()
-    webServer.run(host=mainConfig['webserver']['host'],
-                  port=mainConfig['webserver']['port'], 
+    webServer.run(host=mainConfig.config['webserver']['host'],
+                  port=mainConfig.config['webserver']['port'], 
                   threaded=True,
                   use_reloader=False)
