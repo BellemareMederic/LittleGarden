@@ -2,6 +2,7 @@ from threading import Thread
 import time
 import sqlite3
 
+
 class Temperature(Thread):
     def __init__(self, globalConf):
         Thread.__init__(self)
