@@ -106,8 +106,6 @@ class Water(Thread):
         # pourcentage d'humidité
         # nombre de ml d'everser (time(s)*débie)
         # date et heurs
-    
-    def currentHumidity
 
     def dbGetAvgWeek(self, startdate, enddate):
         connection = createDBConnection()
